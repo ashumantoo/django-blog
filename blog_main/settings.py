@@ -10,9 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
-from pathlib import Path
+# from pathlib import Path
 import os
 from pathlib import Path
+
+# from django.conf.global_settings import MEDIA_URL
 from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -41,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'blogs'
 ]
 
 MIDDLEWARE = [
@@ -135,3 +138,6 @@ STATIC_ROOT = BASE_DIR /'static'
 STATICFILES_DIRS = [
     'blog_main/static'
 ]
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR /'media'

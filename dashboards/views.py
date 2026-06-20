@@ -1,9 +1,12 @@
+from multiprocessing import context, resource_tracker
+
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.defaultfilters import slugify
 
 from blogs.models import Category, Blog
-from dashboards.forms import CategoryForms, BlogPostForms
+from dashboards.forms import CategoryForms, BlogPostForms, AddUserForms
 
 
 #if user not logged in then django will redirect user to login since we have passed login_url
@@ -23,6 +26,7 @@ def dashboard(request):
 def categories(request):
     return render(request,'dashboard/categories.html')
 
+
 def add_category(request):
     if request.method == 'POST':
         form = CategoryForms(request.POST)
@@ -36,6 +40,7 @@ def add_category(request):
         'form': form
     }
     return render(request,'dashboard/add_category.html', context)
+
 
 def edit_category(request,pk):
     category = get_object_or_404(Category,pk=pk)
@@ -88,6 +93,7 @@ def add_post(request):
     }
     return render(request,'dashboard/add_post.html', context)
 
+
 def edit_post(request,pk):
     post = get_object_or_404(Blog,pk=pk)
     if request.method == 'POST':
@@ -112,3 +118,27 @@ def delete_post(request,pk):
     post = get_object_or_404(Blog,pk=pk)
     post.delete()
     return redirect('posts')
+
+
+def users(request):
+    dashboard_users = User.objects.all()
+    context = {
+        'users': dashboard_users
+    }
+    return render(request,'dashboard/users.html', context)
+
+def add_user(request):
+    if request.method == 'POST':
+        form = AddUserForms(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('users')
+        else:
+            print(form.errors)
+
+    form = AddUserForms()
+    context = {
+        'form': form
+    }
+
+    return render(request,'dashboard/add_user.html',context)

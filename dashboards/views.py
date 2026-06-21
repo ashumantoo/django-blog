@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.template.defaultfilters import slugify
 
 from blogs.models import Category, Blog
-from dashboards.forms import CategoryForms, BlogPostForms, AddUserForms
+from dashboards.forms import CategoryForms, BlogPostForms, AddUserForms, EditUserForms
 
 
 #if user not logged in then django will redirect user to login since we have passed login_url
@@ -142,3 +142,25 @@ def add_user(request):
     }
 
     return render(request,'dashboard/add_user.html',context)
+
+
+def edit_user(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    if request.method == 'POST':
+        form = EditUserForms(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('users')
+        else:
+            print(form.errors)
+
+    form = EditUserForms(instance=user)
+    edit_user_context = {
+        'form': form
+    }
+    return render(request,'dashboard/edit_user.html', context=edit_user_context)
+
+def delete_user(request,pk):
+    user = get_object_or_404(User, pk=pk)
+    user.delete()
+    return redirect('users')

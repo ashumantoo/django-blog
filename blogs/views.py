@@ -1,9 +1,10 @@
 from django.db.models import Q
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 
 from django.template.defaultfilters import title
 
-from blogs.models import Blog, Category
+from blogs.models import Blog, Category, Comment
 
 
 # Create your views here.
@@ -32,8 +33,23 @@ def posts_by_category(request,category_id):
 
 def blogs(request, slug):
     blog = get_object_or_404(Blog, slug=slug, status='Published')
+
+    #add comment logic since on comment submit the request will come here only from blog page
+    if request.method == 'POST':
+        comment = Comment()
+        comment.user = request.user
+        comment.blog = blog
+        comment.comment = request.POST['comment'] #comment from name
+        comment.save()
+        return HttpResponseRedirect(request.path_info) #to redirect on the same page from the page on which request made
+
+    #blog == blog, first blog is the field of comment in db, and 2nd blog is the blog that we have fetch upper line from db
+    comments = Comment.objects.filter(blog=blog)
+    comment_count = comments.count()
     context = {
-        'blog':blog
+        'blog':blog,
+        'comments': comments,
+        'comment_count':comment_count
     }
     return render(request,'blog.html', context)
 

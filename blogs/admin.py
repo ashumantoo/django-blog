@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from blogs.models import Category, Blog
+from blogs.models import Category, Blog, Comment
+
 
 class BlogAdmin(admin.ModelAdmin):
     # To generate/pre populate the slug as we type blog title from admin panel
@@ -15,3 +16,4 @@ class BlogAdmin(admin.ModelAdmin):
 # Register your models here.
 admin.site.register(Category)
 admin.site.register(Blog, BlogAdmin)
+admin.site.register(Comment)
